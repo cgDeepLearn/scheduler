@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  sredis:
+    restart: always
+    image: redis:alpine
+    command: --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis-data: /data
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - mynet
+
+  sbackend:
+    build:
+      context: .dockerfiles
+      dockerfile: sbackend.Dockerfile
+    image: sbackend:${PROJECT_VERSION}
+    restart: always
+    volumes:
+      - /var/log/sbackend:/var/log/sbackend
+      - "/etc/localtime:/etc/localtime:ro"
+    depends_on:
+      - smgr
+    networks:
+      - mynet
+
+  smgr:
+    build:
+      context: .dockerfiles
+      dockerfile: smgr.Dockerfile
+    image: smgr:${PROJECT_VERSION}
+    restart: always
+    volumes:
+      - /var/log/smgr:/var/log/smgr
+      - "/etc/localtime:/etc/localtime:ro"
+    depends_on:
+      - sworker
+    networks:
+      - mynet
+
+  sworker:
+    build:
+      context: .dockerfiles
+      dockerfile: sworker.Dockerfile
+    image: sworker:${PROJECT_VERSION}
+    restart: always
+    volumes:
+      - /var/log/sworker:/var/log/sworker
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - mynet
+
+networks:
+  mynet:
+    external: true
+    name: scheduler_net
+
+volumes:
+  redis-data: {}
+
