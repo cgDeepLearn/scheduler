@@ -1,6 +1,6 @@
 FROM python-base:latest
 
-COPY ./src/smgr /use/app/smgr
+COPY ./src/smgr /usr/app/smgr
 
 WORKDIR /usr/app/smgr
 

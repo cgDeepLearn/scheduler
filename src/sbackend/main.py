@@ -12,12 +12,14 @@ from flask import Flask
 from flask_restful import Api
 from module.interface import add_resources
 from config import cfg
+from utils.log import server_logger as logger
 
 
 def init_app():
     f_app = Flask(__name__)
     api = Api(f_app)
     add_resources(api)
+    logger.info("backend start")
     return f_app
 
 

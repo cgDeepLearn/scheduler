@@ -1,6 +1,6 @@
 FROM python-base:latest
 
-COPY ./src/sbackend /use/app/sbackend
+COPY ./src/sbackend /usr/app/sbackend
 
 WORKDIR /usr/app/sbackend
 

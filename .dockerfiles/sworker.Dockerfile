@@ -1,6 +1,6 @@
 FROM python-base:latest
 
-COPY ./src/sbackend /use/app/sworker
+COPY ./src/sworker /usr/app/sworker
 
 WORKDIR /usr/app/sworker
 
