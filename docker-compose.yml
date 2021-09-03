@@ -1,0 +1,86 @@
+version: '3'
+
+services:
+  sredis:
+    restart: always
+    image: redis:alpine
+    volumes:
+      - redis-data:/data
+      - "/etc/localtime:/etc/localtime:ro"
+    command: --appendonly yes --requirepass ${REDIS_PASSWORD}
+    networks:
+      - mynet
+
+  spostgres:
+    restart: always
+    image: postgres:12.5
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    env_file:
+      - .envs/.local/.postgres
+    networks:
+      - mynet
+
+
+  sbackend:
+    build:
+      context: .
+      dockerfile: .dockerfiles/sbackend.Dockerfile
+    image: sbackend:${PROJECT_VERSION}
+    restart: always
+    volumes:
+      - /var/log/sbackend:/var/log/sbackend
+      - "/etc/localtime:/etc/localtime:ro"
+    env_file:
+      - .envs/.local/.postgres
+      - .envs/.local/.redis
+    depends_on:
+      - sredis
+      - spostgres
+    networks:
+      - mynet
+
+  smgr:
+    build:
+      context: .
+      dockerfile: .dockerfiles/smgr.Dockerfile
+    image: smgr:${PROJECT_VERSION}
+    restart: always
+    env_file:
+      - .envs/.local/.postgres
+      - .envs/.local/.redis
+    volumes:
+      - /var/log/smgr:/var/log/smgr
+      - "/etc/localtime:/etc/localtime:ro"
+    depends_on:
+      - sredis
+    networks:
+      - mynet
+
+  sworker:
+    build:
+      context: .
+      dockerfile: .dockerfiles/sworker.Dockerfile
+    image: sworker:${PROJECT_VERSION}
+    restart: always
+    env_file:
+      - .envs/.local/.postgres
+      - .envs/.local/.redis
+    volumes:
+      - /var/log/sworker:/var/log/sworker
+      - "/etc/localtime:/etc/localtime:ro"
+    depends_on:
+      - sredis
+      - smgr
+    networks:
+      - mynet
+
+networks:
+  mynet:
+    external: true
+    name: scheduler_net
+
+volumes:
+  redis-data: {}
+  postgres-data: {}
+
