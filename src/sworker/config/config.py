@@ -105,5 +105,14 @@ class Config(object):
         worker_host = _meta.get("WORKER_HOST", "sworker")  # sworker
         return backend_host, mgr_host, worker_host
 
+    def get_worker_index(self):
+        """worker编号"""
+        if env_config.get("WORKER_INDEX"):
+            # 有配置环境变量
+            worker_index = env_config["WORKER_INDEX"]
+        else:
+            worker_index = 0
+        return worker_index
+
 
 cfg = Config("config/cfg.ini")

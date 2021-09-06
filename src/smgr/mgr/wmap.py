@@ -9,7 +9,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from ..utils.redis_op import redis_op
+from utils.redis_op import redis_op
 
 
 class Singleton(object):
@@ -27,7 +27,7 @@ class Singleton(object):
 
 @Singleton
 class JobMap(object):
-    def __init__(self, job_map_key="rule_job_map", worker_map_key="rule_worker_map"):
+    def __init__(self, job_map_key="scheduler_job_map", worker_map_key="scheduler_worker_map"):
         self._job_map_key = job_map_key
         self._worker_map_key = worker_map_key
 

@@ -57,7 +57,7 @@ services:
     networks:
       - mynet
 
-  sworker:
+  sworker1:
     build:
       context: .
       dockerfile: .dockerfiles/sworker.Dockerfile
@@ -66,8 +66,30 @@ services:
     env_file:
       - .envs/.local/.postgres
       - .envs/.local/.redis
+    environment:
+      WORKER_INDEX: 1
     volumes:
-      - /var/log/sworker:/var/log/sworker
+      - /var/log/sworker1:/var/log/sworker
+      - "/etc/localtime:/etc/localtime:ro"
+    depends_on:
+      - sredis
+      - smgr
+    networks:
+      - mynet
+
+  sworker2:
+    build:
+      context: .
+      dockerfile: .dockerfiles/sworker.Dockerfile
+    image: sworker:${PROJECT_VERSION}
+    restart: always
+    env_file:
+      - .envs/.local/.postgres
+      - .envs/.local/.redis
+    environment:
+      WORKER_INDEX: 2
+    volumes:
+      - /var/log/sworker2:/var/log/sworker
       - "/etc/localtime:/etc/localtime:ro"
     depends_on:
       - sredis
