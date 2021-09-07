@@ -8,40 +8,27 @@
 """
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from mgr.manager import DemoManager
-from mgr.wmap import job_map
+from worker import APSWorker
 
 
 class TaskListView(object):
     """任务列表的操作: 新增和查看"""
     @classmethod
     def get_tasks(cls):
-        res = job_map.get_tasks_info()
+        res = 1
         return res
 
     @classmethod
     def add_task(cls, data):
-        res = DemoManager.create_task(data)
+        res = 2
         return res
 
 
 class TaskView(object):
     """对单个任务的操作:查看、修改、删除"""
-    @classmethod
-    def get_task_info(cls, task_id):
-        """查看任务信息"""
-        return task_id
 
     @classmethod
-    def delete_task(cls, task_id):
+    def delete_task(cls, task_id, sub_job_ids):
         """删除任务"""
-        DemoManager.delete_task(task_id)
+        APSWorker.remove_task(task_id, sub_job_ids)
         return task_id
-
-
-class RegisterView(object):
-    """处理worker的注册请求"""
-    @classmethod
-    def handle(cls, data):
-        res = DemoManager.handle_register(data)
-        return res

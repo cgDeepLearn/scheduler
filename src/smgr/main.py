@@ -12,14 +12,14 @@ from flask import Flask
 from flask_restful import Api
 from config import cfg
 from utils import logger
-from api import jobs_add_resources
+from api import tasks_add_resources
 from mgr.wmap import job_map
 
 
 def init_app():
     f_app = Flask(__name__)
     api = Api(f_app)
-    jobs_add_resources(api)
+    tasks_add_resources(api)
     logger.info("mgr start")
     return f_app
 

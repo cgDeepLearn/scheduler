@@ -102,8 +102,13 @@ class Config(object):
             _meta = dict(self.cfgparser.items(SERVICES_SECTION_NAME))
         backend_host = _meta.get("BACKEND_HOST", "sbackend")  # 后端服务
         mgr_host = _meta.get("MGR_HOST", "smgr")  # smgr
+        mgr_port = int(_meta.get("MGR_PORT", "40002"))  # smgr的端口
         worker_host = _meta.get("WORKER_HOST", "sworker")  # sworker
-        return backend_host, mgr_host, worker_host
+        # 加上编号
+        worker_index = self.get_worker_index()
+        if worker_index > 0:
+            worker_host = f"{worker_host}{worker_index}"
+        return backend_host, mgr_host, mgr_port, worker_host
 
     def get_worker_index(self):
         """worker编号"""

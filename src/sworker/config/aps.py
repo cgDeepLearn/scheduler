@@ -24,8 +24,8 @@ redis_config = {
 }
 
 redis_pool = redis.ConnectionPool(**redis_config)
-uniq_worker_flag = f"worker_{cfg.get_worker_index()}"
-redis_jobs_key = f"apscheduler.jobs_worker{uniq_worker_flag}"
+uniq_worker_flag = cfg.get_services_cfg()[-1]
+redis_jobs_key = f"apscheduler.jobs_{uniq_worker_flag}"
 redis_run_times_key = f"apscheduler.run_times_{uniq_worker_flag}"
 
 jobstores = {
