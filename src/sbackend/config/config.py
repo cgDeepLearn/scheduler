@@ -12,7 +12,7 @@ import os
 from configparser import ConfigParser
 
 LOG_SECTION_NAME = 'Log:Setup'
-DATABASE_SECTION_NAME = 'DATABASE:Setup'
+DATABASE_SECTION_NAME = 'Database:Setup'
 FLASK_SECTION_NAME = 'Flask:Setup'
 REDIS_SECTION_NAME = 'Redis:Setup'
 SERVICES_SECTION_NAME = 'Services:Setup'
@@ -56,13 +56,11 @@ class Config(object):
             _meta = env_config
         elif self.cfgparser.has_section(DATABASE_SECTION_NAME):
             _meta = dict(self.cfgparser.items(DATABASE_SECTION_NAME))
-
         pg_db_host = _meta.get('POSTGRES_HOST', 'spostgres')
         pg_db_port = int(_meta.get('POSTGRES_PORT', '5432'))
         pg_db_username = _meta.get('POSTGRES_USERNAME', '')
         pg_db_password = _meta.get('POSTGRES_PASSWORD', '')
         pg_db_database = _meta.get('POSTGRES_DATABASE', 'db_task')
-
         return pg_db_database, pg_db_username, pg_db_password, pg_db_host, pg_db_port
 
     def get_redis_cfg(self):

@@ -30,3 +30,26 @@ CREATE TABLE "t_task" (
 CREATE TRIGGER "t_task_update" BEFORE UPDATE ON "t_task"
 FOR EACH ROW
 EXECUTE PROCEDURE "update_time_func"();
+
+
+-----------
+--- Table structure for t_task_detail
+------ -----
+DROP TABLE IF EXISTS "t_task_detail";
+CREATE TABLE "t_task_detail" (
+  "id" SERIAL NOT NULL PRIMARY KEY,
+  "task_id" INTEGER NOT NULL,
+  "sub_name" varchar(50) COLLATE "pg_catalog"."default" NOT NULL,
+  "trigger" json NOT NULL default '{}',
+  "action" json NOT NULL default '{}',
+  "is_delete" bool NOT NULL DEFAULT false,
+  "create_time" timestamp(6) without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "update_time" timestamp(6) without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP
+)
+;
+-- ----------------------------
+-- Triggers structure for table t_task_detail
+-- ----------------------------
+CREATE TRIGGER "t_task_detail_update" BEFORE UPDATE ON "t_task_detail"
+FOR EACH ROW
+EXECUTE PROCEDURE "update_time_func"();

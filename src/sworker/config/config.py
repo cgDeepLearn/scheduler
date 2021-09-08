@@ -12,7 +12,7 @@ import os
 from configparser import ConfigParser
 
 LOG_SECTION_NAME = 'Log:Setup'
-DATABASE_SECTION_NAME = 'DATABASE:Setup'
+DATABASE_SECTION_NAME = 'Database:Setup'
 FLASK_SECTION_NAME = 'Flask:Setup'
 REDIS_SECTION_NAME = 'Redis:Setup'
 SERVICES_SECTION_NAME = 'Services:Setup'

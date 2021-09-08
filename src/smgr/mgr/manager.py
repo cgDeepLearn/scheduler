@@ -40,7 +40,7 @@ class DemoManager(object):
         res = {"ret": "ok"}
         # res = requests.post(run_task_url, data=json.dumps(req_data),
         #                     headers=requests_headers).json()
-        logger.info(f"task_id: {task_id}, create_res: {res}")
+        logger.info(f"create_req: {req_data}, create_res: {res}")
         # map 操作对应信息
         job_map.create_task_info(task_id, sub_jod_ids, right_worker)
         return True
@@ -52,9 +52,9 @@ class DemoManager(object):
         task_at_worker = job_map.find_worker(task_id)
         if not task_at_worker:
             raise Exception("task not Existed")
-        sub_job_ids = job_map.get_task_info(task_id)["sub_job_ids"]
+        sub_jids = job_map.get_task_info(task_id)["sub_jids"]
         req_data = {
-            "sub_job_ids": sub_job_ids
+            "sub_job_ids": sub_jids
         }
         # 向对应worker发送删除任务请求
         remove_task_url = f'http://{task_at_worker}/task-worker/tasks/{task_id}'

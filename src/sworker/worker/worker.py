@@ -63,7 +63,7 @@ class APSWorker(object):
         loaded_jids = self.get_jobs()
         worker_config = cfg.get_services_cfg()
         mgr_host, mgr_port, worker_host = worker_config[-3:]
-        rule_mgr_url = f'http://{mgr_host}:{mgr_port}/task-mgr/register-worker/'
+        mgr_url = f'http://{mgr_host}:{mgr_port}/task-mgr/register-worker/'
         _, worker_port = cfg.get_flask_cfg()[0:2]
         # worker_host = socket.gethostbyname(socket.gethostname())
         worker_host_port = f'{worker_host}:{worker_port}'
@@ -72,7 +72,7 @@ class APSWorker(object):
             'worker_host': worker_host_port,
             'all_sub_jids': loaded_jids
         }
-        register_res = requests.post(rule_mgr_url,
+        register_res = requests.post(mgr_url,
                                      data=json.dumps(req_data),
                                      headers=requests_headers,
                                      timeout=5)

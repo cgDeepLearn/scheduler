@@ -31,6 +31,7 @@ class TaskListAPI(Resource):
         tid = task_info["tid"]
         data = {
             # 用于存储与redis的key
+            "tid": tid,
             "task_id": task_id_format.format(tid),
             "task_info": task_info
         }
@@ -48,6 +49,7 @@ class TaskAPI(Resource):
 
     @format_result
     def delete(self, tid):
+        """删除任务"""
         task_id = task_id_format.format(tid)
         res = TaskView.delete_task(task_id)
         return res
