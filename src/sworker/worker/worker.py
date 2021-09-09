@@ -9,18 +9,19 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import datetime
-import json
 import socket
+import json
 import requests
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
-from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 from config.aps import jobstores, executors, job_defaults
 from utils import logger
 from config import cfg
 from .process import JobParser, JobProcess
+
+
+sub_jid_separator = ":"  # 子任务分隔符
 
 
 class APSWorker(object):
@@ -63,7 +64,7 @@ class APSWorker(object):
         loaded_jids = self.get_jobs()
         worker_config = cfg.get_services_cfg()
         mgr_host, mgr_port, worker_host = worker_config[-3:]
-        mgr_url = f'http://{mgr_host}:{mgr_port}/task-mgr/register-worker/'
+        mgr_url = f'http://{mgr_host}:{mgr_port}/task-mgr/register-worker'
         _, worker_port = cfg.get_flask_cfg()[0:2]
         # worker_host = socket.gethostbyname(socket.gethostname())
         worker_host_port = f'{worker_host}:{worker_port}'
@@ -83,37 +84,19 @@ class APSWorker(object):
         """将任务下的子任务分别创建运行"""
         task_id = task_args["task_id"]
         jobs_info = task_args["jobs_info"]
-        for sub_job_id, attach_info in jobs_info.items():
-            self.add_job(sub_job_id, attach_info, jobstore=jobstore)
+        for sub_job_id, job_info in jobs_info.items():
+            self.add_job(sub_job_id, job_info, jobstore=jobstore)
             logger.info(f"added sub_job: {sub_job_id} of {task_id}")
         logger.info(f"task_id:{task_id} added")
 
-    def add_job(self, jid, attach_info, jobstore='redis'):
+    def add_job(self, jid, job_info, jobstore='redis'):
         """添加单个子任务"""
-        trigger_type, expr_info = JobParser.get_trigger_info(attach_info)
+        trigger_info = job_info["trigger_info"]
+        action_info = job_info["action_info"]
+        ctrigger = JobParser.build_trigger(trigger_info)
 
-        if trigger_type == "cron":
-            # cron trigger
-            cron_field_list = expr_info.split(' ')
-            ctrigger = CronTrigger(second=cron_field_list[0],
-                                   minute=cron_field_list[1],
-                                   hour=cron_field_list[2],
-                                   day=cron_field_list[3],
-                                   month=cron_field_list[4],
-                                   day_of_week=cron_field_list[5],
-                                   year=cron_field_list[6])
-        elif trigger_type == "interval":
-            # 时间间隔trigger
-            seconds = expr_info["seconds"]
-            minutes = expr_info["minutes"]
-            hours = expr_info["hours"]
-            days = expr_info["days"]
-            ctrigger = IntervalTrigger(seconds=seconds, minutes=minutes,
-                                       hours=hours, days=days)
-        else:
-            raise Exception(f"trigger_type error: {trigger_type}")
         self.scheduler.add_job(JobProcess.run, trigger=ctrigger,
-                               id=str(jid), args=(jid, attach_info),
+                               id=str(jid), args=(jid, action_info),
                                jobstore=jobstore, replace_existing=True)
 
     def remove_task(self, task_id, sub_job_ids, jobstore='redis'):
@@ -126,3 +109,6 @@ class APSWorker(object):
         """删除单个子任务"""
         self.scheduler.remove_job(jid, jobstore=jobstore)
         logger.info(f"jid: {jid} removed")
+
+
+aps_worker = APSWorker()

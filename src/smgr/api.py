@@ -66,6 +66,6 @@ class RegisterAPI(Resource):
 def tasks_add_resources(api):
     # 对task列表的操作(获取任务列表 和新增任务)
     api.add_resource(TaskListAPI, '/task-mgr/tasks')
-    # 对某个job进行查看、删除操作
+    # 对某个task进行查看、删除操作
     api.add_resource(TaskAPI, '/task-mgr/tasks/<tid>')
     api.add_resource(RegisterAPI, '/task-mgr/register-worker')

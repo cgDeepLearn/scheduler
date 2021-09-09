@@ -9,14 +9,14 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from mgr.manager import DemoManager
-from mgr.wmap import job_map
+from mgr.wmap import demo_job_map
 
 
 class TaskListView(object):
     """任务列表的操作: 新增和查看"""
     @classmethod
     def get_tasks(cls):
-        res = job_map.get_tasks_info()
+        res = demo_job_map.get_tasks_info()
         return res
 
     @classmethod

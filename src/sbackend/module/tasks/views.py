@@ -13,6 +13,7 @@ import requests
 from utils import logger
 from utils.db import pg_execute_sql, DBPool
 from psycopg2 import extras as pg_extras
+from config import cfg
 
 
 task_table = "t_task"
@@ -83,13 +84,15 @@ class TaskListView(object):
             pg_extras.execute_values(cur, task_detail_sql, detail_values, page_size=1000)
             conn.commit()
             # 向mgr发送新增任务请求
-            mgr_host_port = "localhost:40002"
+            mgr_host, mgr_port = cfg.get_service_cfg()[1:3]
+            mgr_host_port = f"{mgr_host}:{mgr_port}"
             req_data = {"tid": added_task_id}
             r_headers = {'Content-Type': 'application/json;charset=UTF-8'}
             mgr_url = f"http://{mgr_host_port}/task-mgr/tasks"
             res = requests.post(mgr_url, data=json.dumps(req_data),
                                 headers=r_headers).json()
             if not res.get("success"):
+                # rollback inserted sql or update  is_delete='t'
                 raise Exception(res["message"])
             cur.close()
             conn.close()
@@ -159,7 +162,8 @@ class TaskView(object):
         try:
             cur.execute(delete_task_sql)
             cur.execute(delete_task_detail_sql)
-            mgr_host_port = "localhost:40002"
+            mgr_host, mgr_port = cfg.get_service_cfg()[1:3]
+            mgr_host_port = f"{mgr_host}:{mgr_port}"
             req_data = {"tid": task_id}
             r_headers = {'Content-Type': 'application/json;charset=UTF-8'}
             mgr_url = f"http://{mgr_host_port}/task-mgr/tasks/{task_id}"
@@ -174,4 +178,4 @@ class TaskView(object):
         finally:
             cur.close()
             conn.close()
-        return True
+        return 'ok'

@@ -27,7 +27,6 @@ class Singleton(object):
         return self._instance[self._cls]
 
 
-@Singleton
 class JobMap(object):
     def __init__(self, job_map_key="scheduler_job_map", worker_map_key="scheduler_worker_map"):
         self._job_map_key = job_map_key
@@ -116,4 +115,5 @@ class JobMap(object):
         redis_op.delete(self._worker_map_key)
 
 
-job_map = JobMap()
+demo_job_map = JobMap(job_map_key="demo_scheduler_job_map",
+                      worker_map_key="demo_scheduler_worker_map")

@@ -73,7 +73,7 @@ class Parser(object):
         # 解析转换后的信息
         trigger_info = {
             "type": t_type,
-            "t_expr": t_expr
+            "expr": t_expr
         }
         return trigger_info
 

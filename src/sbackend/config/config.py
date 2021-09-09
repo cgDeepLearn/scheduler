@@ -100,8 +100,9 @@ class Config(object):
             _meta = dict(self.cfgparser.items(SERVICES_SECTION_NAME))
         backend_host = _meta.get("BACKEND_HOST", "sbackend")  # 后端服务
         mgr_host = _meta.get("MGR_HOST", "smgr")  # smgr
+        mgr_port = int(_meta.get("MGR_PORT", "40002"))  # mgr port
         worker_host = _meta.get("WORKER_HOST", "sworker")  # sworker
-        return backend_host, mgr_host, worker_host
+        return backend_host, mgr_host, mgr_port, worker_host
 
 
 cfg = Config("config/cfg.ini")

@@ -32,7 +32,7 @@ class TaskListAPI(Resource):
 class TaskAPI(Resource):
     @format_result
     def delete(self, task_id):
-        """删除任务"""
+        """删除任务及其下的子任务"""
         # task_id下包含的子任务
         sub_job_ids = request.get_json()["sub_job_ids"]
         res = TaskView.delete_task(task_id, sub_job_ids)
@@ -42,5 +42,5 @@ class TaskAPI(Resource):
 def tasks_add_resources(api):
     # 对task列表的操作(获取任务列表 和新增任务)
     api.add_resource(TaskListAPI, '/task-worker/tasks')
-    # 对某个job进行查看、删除操作
+    # 对某个task进行查看、删除操作
     api.add_resource(TaskAPI, '/task-worker/tasks/<task_id>')
