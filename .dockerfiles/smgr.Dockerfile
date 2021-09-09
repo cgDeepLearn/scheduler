@@ -6,7 +6,7 @@ WORKDIR /usr/app/smgr
 
 ENV TZ=Asia/Shanghai
 
-ENV MGR_PORT=30002
+ENV MGR_PORT=40002
 
 EXPOSE $MGR_PORT
 

@@ -8,6 +8,8 @@ services:
       - redis-data:/data
       - "/etc/localtime:/etc/localtime:ro"
     command: --appendonly yes --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "46379:6379"
     networks:
       - mynet
 
@@ -16,8 +18,11 @@ services:
     image: postgres:12.5
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - "/etc/localtime:/etc/localtime:ro"
     env_file:
       - .envs/.local/.postgres
+    ports:
+      - "45432:5432"
     networks:
       - mynet
 
@@ -34,6 +39,8 @@ services:
     env_file:
       - .envs/.local/.postgres
       - .envs/.local/.redis
+    ports:
+      - "40001:40001"
     depends_on:
       - sredis
       - spostgres
@@ -52,8 +59,11 @@ services:
     volumes:
       - /var/log/smgr:/var/log/smgr
       - "/etc/localtime:/etc/localtime:ro"
+    ports:
+      - "40002:40002"
     depends_on:
       - sredis
+      - spostgres
     networks:
       - mynet
 
@@ -71,6 +81,8 @@ services:
     volumes:
       - /var/log/sworker1:/var/log/sworker
       - "/etc/localtime:/etc/localtime:ro"
+    expose:
+      - "40003"
     depends_on:
       - sredis
       - smgr
@@ -91,6 +103,8 @@ services:
     volumes:
       - /var/log/sworker2:/var/log/sworker
       - "/etc/localtime:/etc/localtime:ro"
+    expose:
+      - "40003"
     depends_on:
       - sredis
       - smgr
