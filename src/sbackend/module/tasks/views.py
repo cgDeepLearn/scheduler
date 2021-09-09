@@ -84,7 +84,7 @@ class TaskListView(object):
             pg_extras.execute_values(cur, task_detail_sql, detail_values, page_size=1000)
             conn.commit()
             # 向mgr发送新增任务请求
-            mgr_host, mgr_port = cfg.get_service_cfg()[1:3]
+            mgr_host, mgr_port = cfg.get_services_cfg()[1:3]
             mgr_host_port = f"{mgr_host}:{mgr_port}"
             req_data = {"tid": added_task_id}
             r_headers = {'Content-Type': 'application/json;charset=UTF-8'}
@@ -162,7 +162,7 @@ class TaskView(object):
         try:
             cur.execute(delete_task_sql)
             cur.execute(delete_task_detail_sql)
-            mgr_host, mgr_port = cfg.get_service_cfg()[1:3]
+            mgr_host, mgr_port = cfg.get_services_cfg()[1:3]
             mgr_host_port = f"{mgr_host}:{mgr_port}"
             req_data = {"tid": task_id}
             r_headers = {'Content-Type': 'application/json;charset=UTF-8'}
