@@ -81,8 +81,8 @@ services:
     volumes:
       - /var/log/sworker1:/var/log/sworker
       - "/etc/localtime:/etc/localtime:ro"
-    ports:
-      - "40003:40003"
+    expose:
+      - "40003"
     depends_on:
       - sredis
       - smgr
@@ -103,8 +103,8 @@ services:
     volumes:
       - /var/log/sworker2:/var/log/sworker
       - "/etc/localtime:/etc/localtime:ro"
-    ports:
-      - "40003:40003"
+    expose:
+      - "40003"
     depends_on:
       - sredis
       - smgr

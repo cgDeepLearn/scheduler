@@ -10,11 +10,15 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import datetime
 from logging.handlers import RotatingFileHandler
 from config import cfg
 import os
 
-LOG_FILENAME = 'sbackend.log'
+
+def shanghai(sec, what):
+    shanghai_time = datetime.datetime.now() + datetime.timedelta(hours=8)
+    return shanghai_time.timetuple()
 
 
 class Logger(object):
@@ -22,7 +26,7 @@ class Logger(object):
 
     def __init__(self, logfilepath, max_bytes, backup_count):
         logging.basicConfig(filename=logfilepath, level=logging.DEBUG)
-
+        logging.Formatter.converter = shanghai
         self.logger = logging.getLogger(logfilepath)
         self.logger.propagate = False
 
