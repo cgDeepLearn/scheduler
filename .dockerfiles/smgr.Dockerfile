@@ -10,4 +10,8 @@ ENV MGR_PORT=40002
 
 EXPOSE $MGR_PORT
 
-CMD ["python3", "main.py", "smgr"]
+COPY ./scripts/smgr-start.sh /usr/app/smgr
+RUN sed -i 's/\r//' smgr-start.sh
+RUN chmod +x smgr-start.sh
+
+CMD ["/bin/sh", "smgr-start.sh"]

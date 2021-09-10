@@ -10,4 +10,8 @@ ENV BACKEND_PORT=40001
 
 EXPOSE $BACKEND_PORT
 
-CMD ["python3", "main.py", "sbackend"]
+COPY ./scripts/sbackend-start.sh /usr/app/sbackend
+RUN sed -i 's/\r//' sbackend-start.sh
+RUN chmod +x sbackend-start.sh
+
+CMD ["/bin/sh", "sbackend-start.sh"]
