@@ -43,6 +43,15 @@ docker-compose -f docker-compose build
 
 3. 运行项目
 
+- 创建项目docker子网(看[docker-compose.yml](./docker-compose.yml)里`net`的名字)
+
+```shell
+docker network create scheduler_net
+docker network ls
+```
+
+- 初步运行
+
 ```shell
 docker-compose -f docker-compose up -d
 ```
@@ -59,7 +68,7 @@ psql --username "$POSTGRES_USER" --dbname "$POSTGRES_DATABASE" -f /tmp/backend.s
 exit
 ```
 
-5. 调用restful接口
+5. 调用restful接口测试
 
 `postman`测试
 
