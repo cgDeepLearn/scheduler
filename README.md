@@ -4,6 +4,25 @@ A interface integrate with manager and worker  running in backend docker
 
 集成APScheduler 的任务调度框架，运行于docker环境, 支持worker扩展
 
+
+- [scheduler](#scheduler)
+  - [环境准备](#环境准备)
+  - [快速开始](#快速开始)
+    - [1. 构建python基础镜像包](#1-构建python基础镜像包)
+    - [2. 构建项目镜像](#2-构建项目镜像)
+    - [3. 运行项目](#3-运行项目)
+    - [4. 初始化数据库](#4-初始化数据库)
+    - [5. 调用restful接口测试](#5-调用restful接口测试)
+      - [1. 获取任务列表](#1-获取任务列表)
+      - [2. 新增任务](#2-新增任务)
+      - [3. 查看某个任务详情](#3-查看某个任务详情)
+      - [4. 删除任务](#4-删除任务)
+      - [5.. 查看日志](#5-查看日志)
+  - [更多](#更多)
+    - [重新生成镜像](#重新生成镜像)
+    - [重启容器](#重启容器)
+    - [自定义任务](#自定义任务)
+  
 ## 环境准备
 
 安装好`docker` 和`docker-compose`
@@ -21,7 +40,9 @@ A interface integrate with manager and worker  running in backend docker
   
 ## 快速开始
 
-1. 进入项目主目录，构建python-base基础环境镜像包，用来快速构建其他镜像
+### 1. 构建python基础镜像包
+
+进入项目主目录 构建python-base基础环境镜像包，用来快速构建其他镜像
 
 ```shell
 bash build-python-base.sh
@@ -35,13 +56,24 @@ bash build-python-base.sh
 
 此步骤得到一个`python-base:latest`的镜像，里面含有项目依赖的python库
 
-2. 构建项目镜像,主要包含`sbackend`、`smgr`、`sworker`三个镜像，具体配置查看[docker-compose.yml](./docker-compose.yml)文件
+### 2. 构建项目镜像
+
+主要包含`sbackend`、`smgr`、`sworker`三个镜像，具体配置查看[docker-compose.yml](./docker-compose.yml)文件
 
 ```shell
 docker-compose -f docker-compose build
 ```
 
-3. 运行项目
+### 3. 运行项目
+
+- 创建项目docker子网(看[docker-compose.yml](./docker-compose.yml)里`net`的名字)
+
+```shell
+docker network create scheduler_net
+docker network ls
+```
+
+- 初步运行
 
 ```shell
 docker-compose -f docker-compose up -d
@@ -50,7 +82,7 @@ docker-compose -f docker-compose up -d
 项目包含`sredis`、`spostgres`、`sbackend`、`smgr`以及两个`sworker`(sworker1和sworker2)容器，
 初次运行会从docker仓库拉取`redis`和`postgres`两个镜像的对应版本
 
-4. 初始化数据库
+### 4. 初始化数据库
 
 ```shell
 docker cp scripts/backend.sql scheduler_spostgres_1:/tmp
@@ -59,11 +91,11 @@ psql --username "$POSTGRES_USER" --dbname "$POSTGRES_DATABASE" -f /tmp/backend.s
 exit
 ```
 
-5. 调用restful接口
+### 5. 调用restful接口测试
 
 `postman`测试
 
-- 获取任务列表
+#### 1. 获取任务列表
 
 ```shell
 GET http://your-host:40001/tasks   (Headers: Content-Type:application/json; charset=utf-8)
@@ -76,7 +108,7 @@ RESPONSE:
 }
 ```
 
-- 新增任务
+#### 2. 新增任务
 
 ```shell
 POST http://your-host:40001/tasks 
@@ -122,7 +154,7 @@ RESPONSE:
 }
 ```
 
-- 查看某个任务详情
+#### 3. 查看某个任务详情
 
 ```shell
 GET http://your-host:40001/tasks/1
@@ -165,7 +197,7 @@ RESPONSE:
 }
 ```
 
-- 删除任务
+#### 4. 删除任务
 
 ```shell
 DELETE http://your-host:40001/tasks/1
@@ -179,7 +211,7 @@ RESPONSE:
 }
 ```
 
-6. 查看日志
+#### 5.. 查看日志
 
 由于几个容器都做了日志目录挂载到宿主机的`/var/log/xxx`目录,可以到宿主机的对应目录下去查看日志
 
