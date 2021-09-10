@@ -102,7 +102,8 @@ class TaskListView(object):
             cur.close()
             conn.close()
             raise Exception(e)
-        return added_task_id
+        task_info.update({"taskId": added_task_id})
+        return task_info
 
 
 class TaskView(object):
