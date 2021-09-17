@@ -16,6 +16,14 @@ WORKDIR /usr/local/python-base
 
 RUN pip3 install -r requirements.txt -i https://pypi.douban.com/simple
 
+ENV TZ Asia/Shanghai
+
+RUN apk add tzdata && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo ${TZ} > /etc/timezone \
+    && apk del tzdata \
+    && mkdir -p /usr/share/zoneinfo/Asia/ \
+    && ln -s /etc/localtime /usr/share/zoneinfo/Asia/Shanghai
+
 # 安装完成后清理缓存
 RUN apk del gcc g++ make libffi-dev openssl-dev && \
     rm -rf /var/cache/apk/*

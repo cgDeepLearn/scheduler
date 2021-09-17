@@ -58,7 +58,6 @@ services:
       - .envs/.local/.redis
     volumes:
       - /var/log/smgr:/var/log/smgr
-      - "/etc/localtime:/etc/localtime:ro"
     ports:
       - "40002:40002"
     depends_on:
@@ -80,7 +79,6 @@ services:
       WORKER_INDEX: 1
     volumes:
       - /var/log/sworker1:/var/log/sworker
-      - "/etc/localtime:/etc/localtime:ro"
     expose:
       - "40003"
     depends_on:
@@ -102,7 +100,6 @@ services:
       WORKER_INDEX: 2
     volumes:
       - /var/log/sworker2:/var/log/sworker
-      - "/etc/localtime:/etc/localtime:ro"
     expose:
       - "40003"
     depends_on:

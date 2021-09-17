@@ -17,7 +17,7 @@ import os
 
 
 def shanghai(sec, what):
-    shanghai_time = datetime.datetime.now() + datetime.timedelta(hours=8)
+    shanghai_time = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
     return shanghai_time.timetuple()
 
 
