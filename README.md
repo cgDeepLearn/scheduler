@@ -361,3 +361,7 @@ docker-compose -f docker-compose.yml up -d
 - 定义相应接口传参 【`sbackend`】
 - 编写对应的任务解析器`parser` 【`smgr`】
 - 编写对应的任务运行处理模块`process` 【`sworker`】
+
+### k3s部署
+
+k3s 部署 请移步 [k3s部署](k3s部署.md)
