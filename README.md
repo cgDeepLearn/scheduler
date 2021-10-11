@@ -98,7 +98,7 @@ exit
 #### 1. 获取任务列表
 
 ```shell
-GET http://your-host:40001/tasks   (Headers: Content-Type:application/json; charset=utf-8)
+GET http://your-host:30001/tasks   (Headers: Content-Type:application/json; charset=utf-8)
 
 RESPONSE:
 {
@@ -111,7 +111,7 @@ RESPONSE:
 #### 2. 新增任务
 
 ```shell
-POST http://your-host:40001/tasks 
+POST http://your-host:30001/tasks 
 
 data: {
         "taskName": "任务r",
@@ -157,7 +157,7 @@ RESPONSE:
 #### 3. 查看某个任务详情
 
 ```shell
-GET http://your-host:40001/tasks/1
+GET http://your-host:30001/tasks/1
 
 RESPONSE:
 {
@@ -200,7 +200,7 @@ RESPONSE:
 #### 4. 删除任务
 
 ```shell
-DELETE http://your-host:40001/tasks/1
+DELETE http://your-host:30001/tasks/1
 
 RESPONSE:
 
@@ -219,18 +219,18 @@ RESPONSE:
 
 ```log
 INFO:werkzeug:192.168.1.165 - - [10/Sep/2021 02:38:46] "GET /tasks HTTP/1.1" 200 -
-DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): smgr:40002
-DEBUG:urllib3.connectionpool:http://smgr:40002 "DELETE /task-mgr/tasks/2 HTTP/1.1" 200 62
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): smgr:30002
+DEBUG:urllib3.connectionpool:http://smgr:30002 "DELETE /task-mgr/tasks/2 HTTP/1.1" 200 62
 2021-09-10 10:39:01,727 INFO Thread-6 decorator.py:33|wrapper: request_<function TaskAPI.delete at 0x7f4d858ae790>, result: {'data': 'ok', 'success': True, 'message': 'Succeed'}
 INFO:werkzeug:192.168.1.165 - - [10/Sep/2021 02:39:01] "DELETE /tasks/2 HTTP/1.1" 200 -
-DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): smgr:40002
-DEBUG:urllib3.connectionpool:http://smgr:40002 "POST /task-mgr/tasks HTTP/1.1" 200 54
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): smgr:30002
+DEBUG:urllib3.connectionpool:http://smgr:30002 "POST /task-mgr/tasks HTTP/1.1" 200 54
 2021-09-10 10:44:45,796 INFO Thread-7 decorator.py:33|wrapper: request_<function TaskListAPI.post at 0x7f4d858ae430>, result: {'data': {'taskName': '任务s', 'taskDetail': [{'subName': 't-random', 'subTrigger': {'type': 'cron', 'value': '12-30/4 * * * * * *'}, 'subAction': {'func': 'random', 'kwargs': {'seed': 4}}}, {'subName': 't-tiktok', 'subTrigger': {'type': 'interval', 'value': '4 sec'}, 'subAction': {'func': 'tiktok', 'kwargs': {}}}], 'taskId': 3}, 'success': True, 'message': 'Succeed'}
 INFO:werkzeug:192.168.1.165 - - [10/Sep/2021 02:44:45] "POST /tasks HTTP/1.1" 200 -
 2021-09-10 10:44:54,942 INFO Thread-8 decorator.py:33|wrapper: request_<function TaskAPI.get at 0x7f4d858ae550>, result: {'data': {'taskName': '任务s', 'taskDetail': [{'subName': 't-random', 'subTrigger': {'type': 'cron', 'value': '12-30/4 * * * * * *'}, 'subAction': {'func': 'random', 'kwargs': {'seed': 4}}}, {'subName': 't-tiktok', 'subTrigger': {'type': 'interval', 'value': '4 sec'}, 'subAction': {'func': 'tiktok', 'kwargs': {}}}]}, 'success': True, 'message': 'Succeed'}
 INFO:werkzeug:192.168.1.165 - - [10/Sep/2021 02:44:54] "GET /tasks/3 HTTP/1.1" 200 -
-DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): smgr:40002
-DEBUG:urllib3.connectionpool:http://smgr:40002 "DELETE /task-mgr/tasks/3 HTTP/1.1" 200 62
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): smgr:30002
+DEBUG:urllib3.connectionpool:http://smgr:30002 "DELETE /task-mgr/tasks/3 HTTP/1.1" 200 62
 2021-09-10 10:46:30,544 INFO Thread-9 decorator.py:33|wrapper: request_<function TaskAPI.delete at 0x7f4d858ae790>, result: {'data': 'ok', 'success': True, 'message': 'Succeed'}
 INFO:werkzeug:192.168.1.165 - - [10/Sep/2021 02:46:30] "DELETE /tasks/3 HTTP/1.1" 200 -
 
@@ -263,13 +263,13 @@ vim /var/log/smgr/smgr.log
 2021-09-10 10:37:40,213 INFO Thread-5 manager.py:43|create_task: create_req: {'task_id': 'DemoTask_2', 'jobs_info': {'DemoTask_2:t-random': {'trigger_inf
 2021-09-10 10:37:40,213 INFO Thread-5 decorator.py:33|wrapper: request_<function TaskListAPI.post at 0x7f0591df2b80>, result: {'data': 'ok', 'success': T
 INFO:werkzeug:172.18.0.4 - - [10/Sep/2021 02:37:40] "POST /task-mgr/tasks HTTP/1.1" 200 -
-DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): sworker1:40003
-DEBUG:urllib3.connectionpool:http://sworker1:40003 "DELETE /task-worker/tasks/DemoTask_2 HTTP/1.1" 200 62                                                
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): sworker1:30003
+DEBUG:urllib3.connectionpool:http://sworker1:30003 "DELETE /task-worker/tasks/DemoTask_2 HTTP/1.1" 200 62                                                
 2021-09-10 10:39:01,715 INFO Thread-6 manager.py:64|delete_task: task_id: DemoTask_2 delete_res: {'data': 'DemoTask_2', 'success': True, 'message': 'Succ
 2021-09-10 10:39:01,716 INFO Thread-6 decorator.py:33|wrapper: request_<function TaskAPI.delete at 0x7f0591df2dc0>, result: {'data': 'DemoTask_2', 'succe
 INFO:werkzeug:172.18.0.4 - - [10/Sep/2021 02:39:01] "DELETE /task-mgr/tasks/2 HTTP/1.1" 200 -                                                            
-DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): sworker1:40003                                                                            
-DEBUG:urllib3.connectionpool:http://sworker1:40003 "POST /task-worker/tasks HTTP/1.1" 200 54       
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): sworker1:30003                                                                            
+DEBUG:urllib3.connectionpool:http://sworker1:30003 "POST /task-worker/tasks HTTP/1.1" 200 54       
 2021-09-10 10:44:45,794 INFO Thread-7 manager.py:43|create_task: create_req: {'task_id': 'DemoTask_3', 'jobs_info': {'DemoTask_3:t-random': {'trigger_inf
 2021-09-10 10:44:45,794 INFO Thread-7 decorator.py:33|wrapper: request_<function TaskListAPI.post at 0x7f0591df2b80>, result: {'data': 'ok', 'success': T
 INFO:werkzeug:172.18.0.4 - - [10/Sep/2021 02:44:45] "POST /task-mgr/tasks HTTP/1.1" 200 -
@@ -361,3 +361,7 @@ docker-compose -f docker-compose.yml up -d
 - 定义相应接口传参 【`sbackend`】
 - 编写对应的任务解析器`parser` 【`smgr`】
 - 编写对应的任务运行处理模块`process` 【`sworker`】
+
+### k3s部署
+
+k3s 部署 请移步 [k3s部署](k3s部署.md)

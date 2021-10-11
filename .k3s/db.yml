@@ -1,0 +1,180 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: spostgres
+  namespace: scheduler
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spostgres
+  namespace: scheduler
+spec:
+  selector:
+    name: spostgres
+  type: NodePort
+  ports:
+    - name: "5432"
+      port: 5432
+      targetPort: 5432
+      nodePort: 30432
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spostgres
+  namespace: scheduler
+  annotations:
+    description: pg数据库
+spec:
+  selector:
+    matchLabels:
+      name: spostgres
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: spostgres
+    spec:
+      containers:
+        - name: spostgres
+          image: postgres:12.5
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: acb153
+            - name: POSTGRES_DB
+              value: db_task
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          livenessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+            periodSeconds: 10
+          resources: { }
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: spostgres
+            - mountPath: /etc/localtime
+              name: localtime
+              readOnly: true
+            - mountPath: /dev/shm
+              name: dshm
+      volumes:
+        - persistentVolumeClaim:
+            claimName: spostgres
+          name: spostgres
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sredis
+  namespace: scheduler
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sredis
+  namespace: scheduler
+spec:
+  selector:
+    name: sredis
+  type: ClusterIP
+  ports:
+    - name: sredis
+      port: 6379
+      targetPort: 6379
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sredis
+  namespace: scheduler
+  annotations:
+    description: redis缓存
+spec:
+  selector:
+    matchLabels:
+      name: sredis
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: sredis
+    spec:
+      containers:
+        - name: sredis
+          image: redis:alpine
+          imagePullPolicy: IfNotPresent
+          args:
+            - --appendonly
+            - 'yes'
+            - --requirepass
+            - '12345'
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -i
+                - -c
+                - test "$(redis-cli -h 127.0.0.1 -a 12345 ping)" == "PONG"
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: { }
+          volumeMounts:
+            - mountPath: /data
+              name: sredis
+      volumes:
+        - persistentVolumeClaim:
+            claimName: sredis
+          name: sredis
