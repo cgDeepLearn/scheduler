@@ -22,6 +22,7 @@ A interface integrate with manager and worker  running in backend docker
     - [重新生成镜像](#重新生成镜像)
     - [重启容器](#重启容器)
     - [自定义任务](#自定义任务)
+    - [k3部署](#k3s部署)
   
 ## 环境准备
 
