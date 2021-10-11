@@ -1,0 +1,219 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sbackend
+  namespace: scheduler
+spec:
+  selector:
+    name: sbackend
+  type: NodePort
+  ports:
+    - name: "30001"
+      port: 30001
+      targetPort: 30001
+      nodePort: 30001
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sbackend
+  namespace: scheduler
+  annotations:
+    description: scheduler后端
+spec:
+  selector:
+    matchLabels:
+      name: sbackend
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: sbackend
+    spec:
+      containers:
+        - name: sbackend
+          image: cgdeeplearn/scheduler_sbackend:0.1.3
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: acb153
+            - name: POSTGRES_DATABASE
+              value: db_task
+            - name: REDIS_PASSWORD
+              value: "12345"
+            - name: BACKEND_HOST
+              value: sbackend
+            - name: MGR_HOST
+              value: smgr
+            - name: MGR_PORT
+              value: "30002"
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smgr
+  namespace: scheduler
+spec:
+  selector:
+    name: smgr
+  type: ClusterIP
+  ports:
+    - name: "30002"
+      port: 30002
+      targetPort: 30002
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smgr
+  namespace: scheduler
+  annotations:
+    description: 任务调度mgr
+spec:
+  selector:
+    matchLabels:
+      name: smgr
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: smgr
+    spec:
+      containers:
+        - name: smgr
+          image: cgdeeplearn/scheduler_smgr:0.1.3
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: acb153
+            - name: POSTGRES_DATABASE
+              value: db_task
+            - name: REDIS_PASSWORD
+              value: "12345"
+            - name: BACKEND_HOST
+              value: sbackend
+            - name: MGR_HOST
+              value: smgr
+            - name: MGR_PORT
+              value: "30002"
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sworker1
+  namespace: scheduler
+spec:
+  selector:
+    name: sworker1
+  type: ClusterIP
+  ports:
+    - name: "30003"
+      port: 30003
+      targetPort: 30003
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sworker1
+  namespace: scheduler
+  annotations:
+    description: 任务调度worker1
+spec:
+  selector:
+    matchLabels:
+      name: sworker1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: sworker1
+    spec:
+      containers:
+        - name: sworker1
+          image: cgdeeplearn/scheduler_sworker:0.1.3
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: acb153
+            - name: POSTGRES_DATABASE
+              value: db_task
+            - name: REDIS_PASSWORD
+              value: "12345"
+            - name: BACKEND_HOST
+              value: sbackend
+            - name: MGR_HOST
+              value: smgr
+            - name: MGR_PORT
+              value: "30002"
+            - name: WORKER_HOST
+              value: sworker
+            - name: WORKER_INDEX
+              value: "1"
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sworker2
+  namespace: scheduler
+spec:
+  selector:
+    name: sworker2
+  type: ClusterIP
+  ports:
+    - name: "30003"
+      port: 30003
+      targetPort: 30003
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sworker2
+  namespace: scheduler
+  annotations:
+    description: 任务调度worker2
+spec:
+  selector:
+    matchLabels:
+      name: sworker2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: sworker2
+    spec:
+      containers:
+        - name: sworker2
+          image: cgdeeplearn/scheduler_sworker:0.1.3
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: acb153
+            - name: POSTGRES_DATABASE
+              value: db_task
+            - name: REDIS_PASSWORD
+              value: "12345"
+            - name: BACKEND_HOST
+              value: sbackend
+            - name: MGR_HOST
+              value: smgr
+            - name: MGR_PORT
+              value: "30002"
+            - name: WORKER_HOST
+              value: sworker
+            - name: WORKER_INDEX
+              value: "2"
+          resources: {}

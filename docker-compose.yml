@@ -40,7 +40,7 @@ services:
       - .envs/.local/.postgres
       - .envs/.local/.redis
     ports:
-      - "40001:40001"
+      - "30001:30001"
     depends_on:
       - sredis
       - spostgres
@@ -59,7 +59,7 @@ services:
     volumes:
       - /var/log/smgr:/var/log/smgr
     ports:
-      - "40002:40002"
+      - "30002:30002"
     depends_on:
       - sredis
       - spostgres
@@ -80,7 +80,7 @@ services:
     volumes:
       - /var/log/sworker1:/var/log/sworker
     expose:
-      - "40003"
+      - "30003"
     depends_on:
       - sredis
       - smgr
@@ -101,7 +101,7 @@ services:
     volumes:
       - /var/log/sworker2:/var/log/sworker
     expose:
-      - "40003"
+      - "30003"
     depends_on:
       - sredis
       - smgr
